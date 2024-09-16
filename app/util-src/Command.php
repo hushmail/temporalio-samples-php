@@ -16,6 +16,7 @@ use Temporal\Client\ScheduleClient;
 use Temporal\Client\ScheduleClientInterface;
 use Temporal\Client\WorkflowClient;
 use Temporal\Client\WorkflowClientInterface;
+use Temporal\Client\ClientOptions;
 use Temporal\Interceptor\SimplePipelineProvider;
 use Temporal\OpenTelemetry\Interceptor\OpenTelemetryWorkflowClientCallsInterceptor;
 
@@ -46,12 +47,18 @@ class Command extends \Symfony\Component\Console\Command\Command
         parent::__construct();
 
         $this->workflowClient = WorkflowClient::create(
+            options: self::buildWorkflowClientOptions(),
             serviceClient: $serviceClient,
             interceptorProvider: new SimplePipelineProvider([
                 new OpenTelemetryWorkflowClientCallsInterceptor(TracerFactory::create('interceptors-sample-client')),
             ])
         );
         $this->scheduleClient = ScheduleClient::create($serviceClient);
+    }
+
+    protected static function buildWorkflowClientOptions(): ?ClientOptions
+    {
+        return null;
     }
 
     /**
